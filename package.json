@@ -1,0 +1,24 @@
+{
+  "name": "peer-npm",
+  "description": "an npm-compatible registry backed by peer-to-peer networks",
+  "author": "Stephen Whitmore <sww@eight.net>",
+  "version": "0.0.0",
+  "repository": {
+    "url": "git://github.com/noffle/peer-npm.git"
+  },
+  "homepage": "https://github.com/noffle/peer-npm",
+  "bugs": "https://github.com/noffle/peer-npm/issues",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js",
+    "lint": "standard"
+  },
+  "keywords": [
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "tape": "~4.6.2",
+    "standard": "~8.3.0"
+  },
+  "license": "ISC"
+}
