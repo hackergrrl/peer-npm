@@ -190,3 +190,16 @@ Someone could publish a package on npm with the same name as a package on
 peer-npm that is compromised. If a user got confused and used npm where they
 should have used peer-npm, they'd install the compromised package.
 
+
+# See Also
+
+This is hardly a new idea!
+
+- http://everythingstays.com
+- https://github.com/ipmjs/ipmjs
+- https://github.com/elsehow/gx-js
+- https://github.com/sterpe/gx-js
+- https://github.com/dominictarr/npmd
+- https://github.com/ipfs/ipfs-npm/
+- https://github.com/diasdavid/npm-on-ipfs
+
