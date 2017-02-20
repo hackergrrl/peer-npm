@@ -10,7 +10,7 @@ module.exports = function (done) {
   router.addRoute('/:pkg?', onPackage)
   router.addRoute('/-/user/org.couchdb.user\::user', onAddUser)
 
-  var driver = require('./files')('/tmp/registry')
+  var driver = require('./hyperdrive')()
 
   var server = http.createServer(function (req, res) {
     console.log(req.method.toUpperCase() + ' ' + req.url)
