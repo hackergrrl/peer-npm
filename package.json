@@ -17,6 +17,7 @@
   "dependencies": {
     "body": "^5.1.0",
     "mkdirp": "^0.5.1",
+    "request": "^2.79.0",
     "routes": "^2.1.0"
   },
   "devDependencies": {

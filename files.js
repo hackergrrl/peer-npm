@@ -5,6 +5,10 @@ var path = require('path')
 module.exports = function (root) {
   mkdirp.sync(root)
 
+  this.isPeerPackage = function (pkg) {
+    return fs.existsSync(path.join(root, pkg + '.json'))
+  }
+
   this.writeTarball = function (filename, buffer, done) {
     fs.writeFile(path.join(root, filename), buffer, done)
   }

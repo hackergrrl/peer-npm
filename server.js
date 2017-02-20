@@ -3,6 +3,7 @@ var fs = require('fs')
 var routes = require('routes')
 var url = require('url')
 var body = require('body')
+var request = require('request')
 
 module.exports = function (done) {
   var router = routes()
@@ -11,7 +12,7 @@ module.exports = function (done) {
   var driver = require('./files')('/tmp/registry')
 
   var server = http.createServer(function (req, res) {
-    console.log(req.url)
+    console.log(req.method.toUpperCase() + ' ' + req.url)
 
     var path = url.parse(req.url).pathname
     var match = router.match(path)
@@ -30,16 +31,25 @@ module.exports = function (done) {
   function onPackage (req, res, match) {
     if (req.method === 'GET') {
       console.log('wants to install', match.params.pkg)
-      fetchPackage(match.params.pkg, res, function (err) {
-        if (err && err.notFound) {
-          res.statusCode = 404
-        } else if (err) {
-          res.statusCode = 500
-        } else {
-          res.statusCode = 201
-        }
-        res.end()
-      })
+      var pkg = match.params.pkg
+      if (driver.isPeerPackage(pkg)) {
+        console.log(pkg + ' is a peer network package')
+        // use peer network
+        fetchPackage(pkg, res, function (err) {
+          if (err && err.notFound) {
+            res.statusCode = 404
+          } else if (err) {
+            res.statusCode = 500
+          } else {
+            res.statusCode = 201
+          }
+          res.end()
+        })
+      } else {
+        // use npm
+        console.log(pkg + ' is an npm package')
+        req.pipe(request('http://registry.npmjs.org/'+pkg)).pipe(res)
+      }
     } else if (req.method === 'PUT') {
       console.log('wants to publish', match.params.pkg)
       body(req, function (err, data) {
