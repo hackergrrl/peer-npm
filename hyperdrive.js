@@ -58,15 +58,15 @@ module.exports = function () {
   }
 
   this.writeMetadata = function (pkg, data, done) {
-    var name = data.name
-    var outname = name + '_' + keys.pub
+    var outname = pkg + '_' + keys.pub
 
-    // TODO: explicitly set all relevant sites; this way could have unintended
-    // consequences
-    traverse(data).forEach(function (v) {
-      if (v === name) {
-        this.update(outname)
-      }
+    data._id = outname
+    data.name = outname
+    Object.keys(data.versions).forEach(function (version) {
+      var v = data.versions[version]
+      v.name = outname
+      var r = new RegExp(pkg, 'g')
+      v.dist.tarball = v.dist.tarball.replace(r, outname)
     })
 
     var ws = archive.createFileWriteStream(outname + '.json')
