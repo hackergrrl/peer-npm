@@ -137,6 +137,11 @@ FOO` will not.
 4. everyone else using peer-npm can now install your package with `peer-npm
    install <your package identifier>`!
 
+## How do I find packages? Is there a search feature?
+
+TODO: this
+
+
 
 # npm adduser
 
