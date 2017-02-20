@@ -15,22 +15,6 @@ var server = http.createServer(function (req, res) {
   var path = url.parse(req.url).pathname
   var match = router.match(path)
   match.fn(req, res, match)
-
-  // if (req.method === 'GET' && req.url === '/foobar') {
-  //   require('fs').createReadStream('./canned.json').pipe(res)
-  // } else if (req.url === '/foobar-0.0.0.tgz') {
-  //   require('fs').createReadStream('./canned.tgz').pipe(res)
-  // } else if (req.url.startsWith('/-/user/org.couchdb.user:')) {
-  //   // Allow any user to be created; doesn't matter.
-  //   res.statusCode = 201
-  //   res.end()
-  // } else if (req.url === '/peer-npm') {
-  //   res.statusCode = 201
-  //   res.end()
-  // } else {
-  //   res.statusCode = 404
-  //   res.end()
-  // }
 })
 
 server.listen(9000, function () {
@@ -41,7 +25,9 @@ function onPackage (req, res, match) {
   if (req.method === 'GET') {
     console.log('wants to install', match.params.pkg)
     fetchPackage(match.params.pkg, res, function (err) {
-      if (err) {
+      if (err && err.notFound) {
+        res.statusCode = 404
+      } else if (err) {
         res.statusCode = 500
       } else {
         res.statusCode = 201
@@ -100,7 +86,7 @@ function writeAttachments (attachments, done) {
 function fetchPackage (pkg, out, done) {
   driver.fetchTarball(pkg, function (err, stream) {
     if (err) return done(err)
-    if (!stream) return done()
+    if (!stream) return done({notFound:true})
     stream.on('error', done)
     stream.on('end', done)
     stream.pipe(out)
