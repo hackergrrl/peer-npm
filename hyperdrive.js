@@ -5,6 +5,7 @@ var fs = require('fs')
 var path = require('path')
 var mkdirp = require('mkdirp')
 var hypercore = require('hypercore')
+var traverse = require('traverse')
 // var swarm = require('discovery-swarm')()
 
 module.exports = function () {
@@ -37,31 +38,39 @@ module.exports = function () {
     return fs.existsSync(path.join(root, pkg + '.json'))
   }
 
-  this.writeTarball = function (filename, buffer, done) {
+  this.writeTarball = function (pkg, filename, buffer, done) {
+    filename = filename.replace(pkg, pkg + '_' + keys.pub)
     var ws = archive.createFileWriteStream(filename)
-    ws.write(buffer)
-    ws.end()
     ws.on('end', done)
     ws.on('finish', done)
+    ws.write(buffer)
+    ws.end()
+    console.log('writing', filename)
   }
 
-  this.writeMetadata = function (data, done) {
-    var ws = archive.createFileWriteStream(data.name + '.json')
-    ws.write(JSON.stringify(data))
-    ws.end()
+  this.writeMetadata = function (pkg, data, done) {
+    var name = data.name
+    var outname = name + '_' + keys.pub
+
+    // TODO: explicitly set all relevant sites; this way could have unintended
+    // consequences
+    traverse(data).forEach(function (v) {
+      if (v === name) {
+        this.update(outname)
+      }
+    })
+
+    var ws = archive.createFileWriteStream(outname + '.json')
     ws.on('finish', done)
     ws.on('error', done)
+    ws.write(JSON.stringify(data))
+    ws.end()
+    console.log('writing', outname + '.json')
   }
 
   this.fetchTarball = function (pkg, done) {
     var rs = archive.createFileReadStream(pkg + '.json')
     done(null, rs)
-    // var fn = path.join(root, pkg + '.json')
-    // if (fs.existsSync(fn)) {
-    //   done(null, fs.createReadStream(fn))
-    // } else {
-    //   done(null, null)
-    // }
   }
 
   this.addUser = function (user, done) {

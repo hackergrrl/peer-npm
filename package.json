@@ -22,7 +22,8 @@
     "level": "^1.6.0",
     "mkdirp": "^0.5.1",
     "request": "^2.79.0",
-    "routes": "^2.1.0"
+    "routes": "^2.1.0",
+    "traverse": "^0.6.6"
   },
   "devDependencies": {
     "tape": "~4.6.2",

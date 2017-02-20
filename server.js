@@ -81,20 +81,23 @@ module.exports = function (done) {
     delete data._attachments
 
     var pending = 2
-    driver.writeMetadata(data, function (err) {
+    var pkg = data.name
+    driver.writeMetadata(pkg, data, function (err) {
+      console.log('wrote meta')
       if (--pending === 0) done(err)
     })
-    writeAttachments(attachments, function (err) {
+    writeAttachments(pkg, attachments, function (err) {
+      console.log('wrote tarball')
       if (--pending === 0) done(err)
     })
   }
 
-  function writeAttachments (attachments, done) {
+  function writeAttachments (pkg, attachments, done) {
     var pending = Object.keys(attachments).length
 
     Object.keys(attachments).forEach(function (filename) {
       var data = new Buffer(attachments[filename].data, 'base64')
-      driver.writeTarball(filename, data, function (err) {
+      driver.writeTarball(pkg, filename, data, function (err) {
         if (--pending === 0) done()
       })
     })
