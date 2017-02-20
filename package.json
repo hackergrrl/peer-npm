@@ -13,9 +13,12 @@
     "test": "tape test/*.js",
     "lint": "standard"
   },
-  "keywords": [
-  ],
-  "dependencies": {},
+  "keywords": [],
+  "dependencies": {
+    "body": "^5.1.0",
+    "mkdirp": "^0.5.1",
+    "routes": "^2.1.0"
+  },
   "devDependencies": {
     "tape": "~4.6.2",
     "standard": "~8.3.0"
