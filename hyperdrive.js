@@ -6,7 +6,7 @@ var path = require('path')
 var mkdirp = require('mkdirp')
 var hypercore = require('hypercore')
 var collect = require('collect-stream')
-// var swarm = require('discovery-swarm')()
+var Swarm = require('discovery-swarm')
 
 module.exports = function () {
   var root = config('peer-npm')
@@ -36,6 +36,48 @@ module.exports = function () {
     })
     console.log('---')
   })
+
+  function host () {
+    var link = archive.key.toString('hex')
+
+    // the archive is now ready for sharing.
+    // we can use swarm to replicate it to other peers
+    console.log('hosting archive on swarm for', link)
+    var swarm = Swarm()
+    swarm.listen()
+    swarm.join(link)
+    swarm.on('connection', function (connection) {
+      console.log('found a peer to share', link, 'with')
+      var r = archive.replicate()
+      connection.pipe(r).pipe(connection)
+      r.on('end', function () {
+        console.log('replicated with peer to share', key)
+        done(null, archive)
+      })
+      r.on('error', function (err) {
+        console.log('ERROR REPLICATION:', err)
+      })
+    })
+    return swarm
+  }
+
+  // TODO: clean up archive when done
+  function getArchive (key, done) {
+    console.log('getting archive', key)
+    var archive = drive.createArchive(key)
+    done(null, archive)
+
+    var swarm = Swarm()
+    swarm.listen()
+    swarm.join(key)
+    swarm.on('connection', function (connection) {
+      console.log('found a peer to get', key)
+      var r = archive.replicate()
+      connection.pipe(r).pipe(connection)
+    })
+  }
+
+  var swarm = host()
 
   // TODO: this could be more robust (check that it's a hexstring, etc)
   this.isPeerPackage = function (pkg) {
@@ -79,19 +121,26 @@ module.exports = function () {
   }
 
   this.fetchMetadata = function (pkg, done) {
-    var filename = pkg + '.json'
-    console.log('fetching', filename)
-    collect(archive.createFileReadStream(filename), function (err, data) {
+    var key = pkg.substring(pkg.length - 64)
+    getArchive(key, function (err, archive) {
       if (err) return done(err)
-      var json = JSON.parse(data.toString())
-      done(null, json)
+      console.log('got metadata archive!', pkg)
+      var filename = pkg + '.json'
+      collect(archive.createFileReadStream(filename), function (err, data) {
+        if (err) return done(err)
+        var json = JSON.parse(data.toString())
+        done(null, json)
+      })
     })
   }
 
   this.fetchTarball = function (filename, done) {
-    // TODO: this is incorrect
-    var rs = archive.createFileReadStream(filename)
-    done(null, rs)
+    console.log(filename)
+    getArchive(pkg, function (err, archive) {
+      if (err) return done(err)
+      var rs = archive.createFileReadStream(filename)
+      done(null, rs)
+    })
   }
 
   this.addUser = function (user, done) {
@@ -101,3 +150,4 @@ module.exports = function () {
 
   return this
 }
+
