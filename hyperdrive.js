@@ -17,11 +17,7 @@ module.exports = function () {
   var archive
   if (fs.existsSync(path.join(root, 'keys.json'))) {
     keys = JSON.parse(fs.readFileSync(path.join(root, 'keys.json'), 'utf-8'))
-    archive = drive.createArchive(keys.pub, {
-      live: true,
-      // metadata: core.createFeed(key),
-      // content: core.createFeed(contentKey)
-    })
+    archive = drive.createArchive(keys.pub, { live: true })
     console.log('found existing keypair + archive: ' + keys.pub)
   } else {
     archive = drive.createArchive({live: true})
@@ -33,9 +29,21 @@ module.exports = function () {
     console.log('created brand new keypair + archive: ' + keys.pub)
   }
 
+  archive.list(function (err, entries) {
+    console.log('--- current entries ---')
+    entries.forEach(function (e) {
+      console.log(e.name)
+    })
+    console.log('---')
+  })
+
+  // TODO: this could be more robust (check that it's a hexstring, etc)
   this.isPeerPackage = function (pkg) {
-    return true
-    return fs.existsSync(path.join(root, pkg + '.json'))
+    var ending = pkg.lastIndexOf('_')
+    if (ending === -1) return false
+
+    var key = pkg.substring(ending + 1)
+    return key.length === 64
   }
 
   this.writeTarball = function (pkg, filename, buffer, done) {
@@ -43,6 +51,7 @@ module.exports = function () {
     var ws = archive.createFileWriteStream(filename)
     ws.on('end', done)
     ws.on('finish', done)
+    ws.on('close', done)
     ws.write(buffer)
     ws.end()
     console.log('writing', filename)
@@ -63,6 +72,7 @@ module.exports = function () {
     var ws = archive.createFileWriteStream(outname + '.json')
     ws.on('finish', done)
     ws.on('error', done)
+    ws.on('close', done)
     ws.write(JSON.stringify(data))
     ws.end()
     console.log('writing', outname + '.json')
