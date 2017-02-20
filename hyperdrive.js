@@ -5,7 +5,7 @@ var fs = require('fs')
 var path = require('path')
 var mkdirp = require('mkdirp')
 var hypercore = require('hypercore')
-var traverse = require('traverse')
+var collect = require('collect-stream')
 // var swarm = require('discovery-swarm')()
 
 module.exports = function () {
@@ -78,8 +78,19 @@ module.exports = function () {
     console.log('writing', outname + '.json')
   }
 
-  this.fetchTarball = function (pkg, done) {
-    var rs = archive.createFileReadStream(pkg + '.json')
+  this.fetchMetadata = function (pkg, done) {
+    var filename = pkg + '.json'
+    console.log('fetching', filename)
+    collect(archive.createFileReadStream(filename), function (err, data) {
+      if (err) return done(err)
+      var json = JSON.parse(data.toString())
+      done(null, json)
+    })
+  }
+
+  this.fetchTarball = function (filename, done) {
+    // TODO: this is incorrect
+    var rs = archive.createFileReadStream(filename)
     done(null, rs)
   }
 
@@ -90,4 +101,3 @@ module.exports = function () {
 
   return this
 }
-
