@@ -14,7 +14,12 @@ var server = http.createServer(function (req, res) {
 
   var path = url.parse(req.url).pathname
   var match = router.match(path)
-  match.fn(req, res, match)
+  if (match) {
+    match.fn(req, res, match)
+  } else {
+    res.statusCode = 404
+    res.end()
+  }
 })
 
 server.listen(9000, function () {
