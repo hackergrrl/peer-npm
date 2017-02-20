@@ -7,7 +7,8 @@ var request = require('request')
 
 module.exports = function (done) {
   var router = routes()
-  router.addRoute("/:pkg?", onPackage)
+  router.addRoute('/:pkg?', onPackage)
+  router.addRoute('/-/user/org.couchdb.user\::user', onAddUser)
 
   var driver = require('./files')('/tmp/registry')
 
@@ -106,6 +107,22 @@ module.exports = function (done) {
       stream.on('error', done)
       stream.on('end', done)
       stream.pipe(out)
+    })
+  }
+
+  function onAddUser (req, res, match) {
+    body(req, function (err, data) {
+      driver.addUser({
+        name: data.name,
+        email: data.email
+      }, function (err) {
+        if (err) {
+          res.statusCode = 404
+        } else {
+          res.statusCode = 201
+        }
+        res.end()
+      })
     })
   }
 
