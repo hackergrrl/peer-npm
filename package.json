@@ -3,6 +3,9 @@
   "description": "an npm-compatible registry backed by peer-to-peer networks",
   "author": "Stephen Whitmore <sww@eight.net>",
   "version": "0.0.0",
+  "bin": {
+    "peer-npm": "bin/cli.js"
+  },
   "repository": {
     "url": "git://github.com/noffle/peer-npm.git"
   },
@@ -13,7 +16,17 @@
     "test": "tape test/*.js",
     "lint": "standard"
   },
-  "keywords": [],
+  "keywords": [
+    "peer",
+    "npm",
+    "distributed",
+    "offline",
+    "decentralized",
+    "node",
+    "package",
+    "manager",
+    "swarm"
+  ],
   "dependencies": {
     "application-config-path": "^0.1.0",
     "body": "^5.1.0",
