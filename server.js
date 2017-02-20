@@ -7,8 +7,9 @@ var request = require('request')
 
 module.exports = function (done) {
   var router = routes()
-  router.addRoute('/:pkg?', onPackage)
+  router.addRoute('/:pkg', onPackage)
   router.addRoute('/-/user/org.couchdb.user\::user', onAddUser)
+  router.addRoute('/:pkg/-/:tarball', onTarball)
 
   var driver = require('./hyperdrive')()
 
@@ -31,18 +32,16 @@ module.exports = function (done) {
 
   function onPackage (req, res, match) {
     if (req.method === 'GET') {
-      console.log('wants to install', match.params.pkg)
       var pkg = match.params.pkg
       if (driver.isPeerPackage(pkg)) {
         console.log(pkg + ' is a peer network package')
         // use peer network
-        fetchPackage(pkg, res, function (err) {
-          if (err && err.notFound) {
+        driver.fetchMetadata(pkg, function (err, meta) {
+          if (err) {
             res.statusCode = 404
-          } else if (err) {
-            res.statusCode = 500
           } else {
             res.statusCode = 201
+            res.write(JSON.stringify(meta))
           }
           res.end()
         })
@@ -104,13 +103,8 @@ module.exports = function (done) {
   }
 
   function fetchPackage (pkg, out, done) {
-    driver.fetchTarball(pkg, function (err, stream) {
-      if (err) return done(err)
-      if (!stream) return done({notFound:true})
-      stream.on('error', done)
-      stream.on('end', done)
-      stream.pipe(out)
-    })
+    console.log('fetch pkg', pkg)
+    driver.fetchMetadata(pkg, done)
   }
 
   function onAddUser (req, res, match) {
@@ -126,6 +120,19 @@ module.exports = function (done) {
         }
         res.end()
       })
+    })
+  }
+
+  function onTarball (req, res, match) {
+    var tarball = match.params.tarball
+    console.log('wants tarball:', tarball)
+    driver.fetchTarball(tarball, function (err, stream) {
+      if (err) {
+        res.statusCode = 404
+        res.end()
+      } else {
+        stream.pipe(res)
+      }
     })
   }
 
