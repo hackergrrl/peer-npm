@@ -202,4 +202,5 @@ This is hardly a new idea!
 - https://github.com/dominictarr/npmd
 - https://github.com/ipfs/ipfs-npm/
 - https://github.com/diasdavid/npm-on-ipfs
+- https://github.com/watson/npm-to-hypercore
 
