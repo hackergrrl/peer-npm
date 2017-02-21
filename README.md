@@ -21,7 +21,7 @@ TODO: write-up
 ## Usage
 
 To be used just like vanilla `npm`, but with a subset of commands: `install`,
-`publish`, and `adduser`.
+`remove`, and `publish`.
 
 ```
 USAGE:
@@ -34,11 +34,7 @@ USAGE:
   peer-npm publish
 
     Works like `npm publish`. Publish the current package to the swarm.
-
-  peer-npm adduser
-
-    Required to be run before use. The information provided appears in the
-    `author` metadata, but is otherwise inconsequential.
+    Generates a new keypair if one is not already present.
 
 ```
 
@@ -51,17 +47,6 @@ With [npm](https://npmjs.org/) installed, run
 ```
 $ npm install --global peer-npm
 ```
-
-### Generate a private/public keypair
-
-These keys serve as your identity in the swarm. Run
-
-```
-$ peer-npm adduser
-```
-
-and fill in the fields. The password is unused, and the other fields are only to
-populate the `author` metadata in the packages you publish.
 
 ### Join the swarm
 
@@ -84,7 +69,8 @@ Published 0.0.4
 ```
 
 Once published, it will output the name of your package, concatenated with your
-public key. These together form the unique name of your package in the swarm.
+newly generated public key. These together form the unique name of your package
+in the swarm.
 
 ### Install a package
 

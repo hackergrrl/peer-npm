@@ -9,8 +9,3 @@ USAGE:
 
     Works like `npm publish`. Publish the current package to the swarm.
 
-  peer-npm adduser
-
-    Required to be run before use. The information provided appears in the
-    `author` metadata, but is otherwise inconsequential.
-
