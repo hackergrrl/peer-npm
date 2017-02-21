@@ -141,6 +141,23 @@ FOO` will not.
 
 TODO: this
 
+## How can I have a hybrid package that others can use npm with but peer-npm users can rely on the swarm?
+
+`peer-npm` stores all p2p network dependencies under a special key of
+`package.json` that stock `npm` does not look at: `swarmDependencies`.
+
+This means you can continue to use `npm` as per normal, but rely on peer network
+for fetching dependencies if you choose to use `peer-npm`. peer-npm won't
+"poison" your `package.json` in such a way that `npm` ceases to function.
+
+## How will interop work with other p2p networks?
+
+A swarm package is identified by its name, the network it resides on, and a
+unique identifier. A package on hyperdrive, for example, might be
+
+```
+airfile_hdrive_ac06be2400c40f2c90f5f5282d57877b2de1674f5a736d3d9ae7c29e491d1a5c
+```
 
 
 # npm adduser
