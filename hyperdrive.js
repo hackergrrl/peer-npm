@@ -40,9 +40,6 @@ module.exports = function () {
   function host () {
     var link = archive.key.toString('hex')
 
-    // the archive is now ready for sharing.
-    // we can use swarm to replicate it to other peers
-    console.log('hosting archive on swarm for', link)
     var swarm = Swarm()
     swarm.listen()
     swarm.join(link)
@@ -51,7 +48,7 @@ module.exports = function () {
       var r = archive.replicate()
       connection.pipe(r).pipe(connection)
       r.on('end', function () {
-        console.log('replicated with peer to share', key)
+        console.log('replicated with peer to share', link)
         done(null, archive)
       })
       r.on('error', function (err) {
@@ -124,7 +121,6 @@ module.exports = function () {
     var key = pkg.substring(pkg.length - 64)
     getArchive(key, function (err, archive) {
       if (err) return done(err)
-      console.log('got metadata archive!', pkg)
       var filename = pkg + '.json'
       collect(archive.createFileReadStream(filename), function (err, data) {
         if (err) return done(err)
