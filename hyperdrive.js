@@ -66,7 +66,7 @@ module.exports = function () {
     var swarm = Swarm()
     swarm.listen()
     swarm.join(key)
-    swarm.on('connection', function (connection) {
+    swarm.on('connection', function (connection, info) {
       console.log('[PEER] found a peer: ', info.id.toString('hex'))
       var r = archive.replicate()
       connection.pipe(r).pipe(connection)
