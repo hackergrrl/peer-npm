@@ -31,6 +31,7 @@
     "application-config-path": "^0.1.0",
     "body": "^5.1.0",
     "collect-stream": "^1.2.1",
+    "comandante": "0.0.1",
     "discovery-swarm": "^4.2.0",
     "hyperdrive": "^7.14.3",
     "level": "^1.6.0",
