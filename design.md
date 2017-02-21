@@ -159,6 +159,31 @@ unique identifier. A package on hyperdrive, for example, might be
 airfile_hdrive_ac06be2400c40f2c90f5f5282d57877b2de1674f5a736d3d9ae7c29e491d1a5c
 ```
 
+Daemons will be spun up as required.
+
+## How will swarmDependencies work when a dep has its own swarmDependencies?
+
+So, I do a `peer-npm install
+airfile_hdrive_ac06be2400c40f2c90f5f5282d57877b2de1674f5a736d3d9ae7c29e491d1a5c`,
+but that module has, say, `xhr_hdrive_publickey` in its swarmDependencies.
+
+Currently: it won't work. The current logic only pulls swarm deps out of the top
+level package you're currently working with.
+
+Is this even possible without digging into the npm client program?
+
+What if, at `peer-npm publish`-time, we published the module with its
+swarmDependencies in the dependencies slot?
+
+Ah ha! So then if you do a `git clone` or want to work /w the source code it'll
+work just fine (proper partitioning), but if you `peer-npm install` it, it'll
+recursively use the swarm deps available. Smart! <3
+
+TODO:
+- rewrite swarmDependencies -> dependencies in driver.writeMetadata
+  - means discarding npm dupes
+
+
 
 # npm adduser
 
