@@ -43,13 +43,12 @@ module.exports = function () {
     var swarm = Swarm()
     swarm.listen()
     swarm.join(link)
-    swarm.on('connection', function (connection) {
-      console.log('found a peer to share', link, 'with')
+    swarm.on('connection', function (connection, info) {
+      console.log('[HOST] found a peer: ', info.id.toString('hex'))
       var r = archive.replicate()
       connection.pipe(r).pipe(connection)
       r.on('end', function () {
         console.log('replicated with peer to share', link)
-        done(null, archive)
       })
       r.on('error', function (err) {
         console.log('ERROR REPLICATION:', err)
@@ -68,9 +67,15 @@ module.exports = function () {
     swarm.listen()
     swarm.join(key)
     swarm.on('connection', function (connection) {
-      console.log('found a peer to get', key)
+      console.log('[PEER] found a peer: ', info.id.toString('hex'))
       var r = archive.replicate()
       connection.pipe(r).pipe(connection)
+      r.on('end', function () {
+        console.log('replicated with peer to share', link)
+      })
+      r.on('error', function (err) {
+        console.log('ERROR REPLICATION:', err)
+      })
     })
   }
 
