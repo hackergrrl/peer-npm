@@ -52,6 +52,27 @@ With [npm](https://npmjs.org/) installed, run
 $ npm install --global peer-npm
 ```
 
+### Generate a private/public keypair
+
+These keys serve as your identity in the swarm. Run
+
+```
+$ peer-npm adduser
+```
+
+and fill in the fields. The password is unused, and the other fields are only to
+populate the `author` metadata in the packages you publish.
+
+### Join the swarm
+
+In another window run
+
+```
+$ peer-npm daemon
+```
+
+so that you can download packages from others and share the ones you publish.
+
 ### Republish a module to the swarm
 
 Navigate to a node package's directory (the one with `package.json`) and run
