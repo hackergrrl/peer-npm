@@ -125,6 +125,10 @@ want and download them, recursively down the dependency tree. Similarly, when
 you run `peer-npm publish`, the new package's key is shared amongst other
 `peer-npm` peers for future discovery.
 
+## IRC
+
+Come hang out in `#peer-npm` on Freenode to help test and develop!
+
 ## License
 
 ISC
