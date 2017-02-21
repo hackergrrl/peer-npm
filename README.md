@@ -2,21 +2,16 @@
 
 > an npm-compatible registry backed by peer-to-peer networks
 
-**NOTE**: This is just a WIP experiment and barely works; please adjust
-expectations accordingly.
-
-TODO: write-up
-
+**NOTE**: Very unstable and mad science-y. Use at your own discretion.
 
 ## WHY would someone want something like this?
 
 - I want an easy way to use/publish/install packages when I'm offline
 - I want to be able to install/share packages /w my friends over LAN
 - I want my packages to be available & resistant to censorship & network failure
-- I want a fail-safe in case npm Inc ever goes away or is seized by the government
+- I want a fail-safe in case npm Inc ever goes away or is seized by the
+  government
 - I want a package manager whose backend is 100% permissively open source
-
-
 
 ## Usage
 
@@ -58,30 +53,50 @@ $ peer-npm daemon
 
 so that you can download packages from others and share the ones you publish.
 
-### Republish a module to the swarm
+### Publish a module to the swarm
 
-Navigate to a node package's directory (the one with `package.json`) and run
+Let's grab a package from github and try to publish it:
 
 ```
+$ cd /tmp
+
+$ git clone https://github.com/noffle/resync-srt
+
+$ cd resync-srt
+
+$ npm install
+
 $ peer-npm publish
-+ foobar_ac06be2400c40f2c90f5f5282d57877b2de1674f5a736d3d9ae7c29e491d1a5c
-Published 0.0.4
++ resync-srt_hyperdrive_c5abee5fd496620499c3d203f15c95d24a51d16ec05dea4a8ab2c88368c296b9
+Published 3.1.0
 ```
 
-Once published, it will output the name of your package, concatenated with your
-newly generated public key. These together form the unique name of your package
-in the swarm.
+`resync-srt` is now in the swarm! The name of the package is made of three
+parts, concatenated by underscores: the package name, the peer network its
+shared on, and the public key of the publisher.
 
-### Install a package
+### Install a swarm dependency
 
-Let's install a package, via the swarm! Navigate to `/tmp` and run
+Let's make a new package that depends on `resync-srt`:
 
 ```
-$ peer-npm install peer-npm_f052af309e32af0fa3b4309293b5350a00acc6a2a583b28a3a53fdf88197ead9
+$ cd /tmp
+$ mkdir foobar
+$ cd foobar
+
+$ npm init
+
+# you'll want to use the package name generated from the last step
+$ peer-npm install --save resync-srt_hyperdrive_c5abee5fd496620499c3d203f15c95d24a51d16ec05dea4a8ab2c88368c296b9
 ```
 
-This will install `peer-npm` itself from other peer-npm users over the internet,
-or local network.
+If you look in your `package.json` you'll see a new section called
+`swarmDependencies`. This lets `peer-npm` know what packages you depend on in
+the swarm, but in a way that keeps vanilla `npm` working.
+
+In fact, you can have a package in both `swarmDependencies` *and* regular
+`dependencies`. Using `peer-npm` won't break your package for non-`peer-npm`
+users.
 
 
 ## How does it work?
@@ -97,8 +112,8 @@ When you publish or try to install a package, `peer-npm` looks at its name to
 decide whether it is a package from the central npm registry, or from the swarm.
 
 npm packages have a name like `field-trip`, whereas swarm packages have a name
-like `field-trip_79cf7ecc9baf627642099542b3714bbef`. The part after the name is
-the public key of the author. This makes packages resiliant against
+like `field-trip_hyperdrive_79cf7ecc9baf627642099542b3714bbef`. The part after
+the name is the public key of the author. This makes packages resiliant against
 impersonation or malicious peers.
 
 `peer-npm` can work with different peer networks; right now there is only a
