@@ -19,7 +19,6 @@ switch (process.argv[2]) {
   case 'install':
   case 'i':
   case 'remove':
-    console.log('1')
     rewrite('package.json', function (done) {
       var args = ['--registry', 'http://localhost:9000']
       args = args.concat(process.argv.slice(2))

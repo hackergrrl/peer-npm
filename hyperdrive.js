@@ -118,9 +118,8 @@ module.exports = function () {
       v.dist.tarball = v.dist.tarball.replace(r, outname)
     })
 
-    // TODO: move swarmDependencies into dependencies
+    // move swarmDependencies into dependencies
     moveSwarmDepsIntoRegularDeps(data)
-    console.log(JSON.stringify(data, null, 2))
 
     var ws = archive.createFileWriteStream(outname + '.json')
     ws.on('finish', done)

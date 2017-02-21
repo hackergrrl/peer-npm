@@ -21,16 +21,12 @@ function rewrite (filename, rewriteDoneCb, cleanupDoneCb) {
   })
   delete pkgJson['swarmDependencies']
 
-  console.log('pre', pkgJson)
-
   // 5. shell out to npm
   rewriteDoneCb(cleanup)
 
   function cleanup () {
     // 6. reread package.json
     pkgJson = JSON.parse(fs.readFileSync(filename, 'utf-8'))
-
-    console.log('post', pkgJson)
 
     // 7. move all swarm deps in regular deps back into swarm deps
     pkgJson['swarmDependencies'] = pkgJson['swarmDependencies'] || {}
