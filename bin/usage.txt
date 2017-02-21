@@ -1,0 +1,16 @@
+USAGE:
+
+  peer-npm i, install [-S] [-D]
+
+    Works like `npm install`. Accepts a peer-npm package name to install from
+    the swarm.
+
+  peer-npm publish
+
+    Works like `npm publish`. Publish the current package to the swarm.
+
+  peer-npm adduser
+
+    Required to be run before use. The information provided appears in the
+    `author` metadata, but is otherwise inconsequential.
+

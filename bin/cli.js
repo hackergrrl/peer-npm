@@ -5,7 +5,7 @@ var spawn = require('child_process').spawn
 var createServer = require('../server')
 
 if (process.argv.length === 2) {
-  console.log('TODO: usage notes')
+  printUsage()
   return
 }
 
@@ -24,7 +24,10 @@ switch (process.argv[2]) {
     })
     break
   default:
-    console.log('TODO: print usage notice')
+    printUsage()
     break
 }
 
+function printUsage () {
+  require('fs').createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
+}
