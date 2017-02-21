@@ -2,6 +2,8 @@
 
 > an npm-compatible registry backed by peer-to-peer networks
 
+**NOTE**: This is just a WIP experiment and barely works; please adjust
+expectations accordingly.
 
 TODO: write-up
 
