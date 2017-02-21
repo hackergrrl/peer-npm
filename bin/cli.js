@@ -8,6 +8,7 @@ var config = require('application-config-path')
 var createServer = require('../server')
 var homedir = require('os').homedir
 var swarmAddr = require('../swarm-addr')
+var rewrite = require('../rewrite-packagejson')
 
 if (process.argv.length === 2) {
   printUsage()
@@ -18,9 +19,13 @@ switch (process.argv[2]) {
   case 'install':
   case 'i':
   case 'remove':
-    var args = ['--registry', 'http://localhost:9000']
-    args = args.concat(process.argv.slice(2))
-    spawn('npm', args, {stdio:'inherit'})
+    console.log('1')
+    rewrite('package.json', function (done) {
+      var args = ['--registry', 'http://localhost:9000']
+      args = args.concat(process.argv.slice(2))
+      var p = spawn('npm', args, {stdio:'inherit'})
+      p.on('close', done)
+    })
     break
   case 'publish':  // TODO: output the package name /w public key
     if (!isNpmrcReady()) {

@@ -21,6 +21,13 @@ module.exports = function () {
     keys = JSON.parse(fs.readFileSync(path.join(root, 'keys.json'), 'utf-8'))
     archive = drive.createArchive(keys.pub, { live: true })
     console.log('found existing keypair + archive: ' + keys.pub)
+
+    // TODO: use base58 encoding for keys
+    // var k = new Buffer(keys.pub, 'hex')
+    // console.log(k)
+    // var out = require('bs58').encode(k)
+    // console.log(out)
+    // console.log(keys.pub)
   } else {
     archive = drive.createArchive({live: true})
     keys = {
