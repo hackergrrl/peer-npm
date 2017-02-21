@@ -2,7 +2,7 @@
   "name": "peer-npm",
   "description": "A peer-to-peer substitute for npm.",
   "author": "Stephen Whitmore <sww@eight.net>",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "bin": {
     "peer-npm": "bin/cli.js"
   },
