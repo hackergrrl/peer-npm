@@ -7,7 +7,7 @@ var spawn = require('child_process').spawn
 var config = require('application-config-path')
 var createServer = require('../server')
 var homedir = require('os').homedir
-var peerAddr = require('../peer-addr')
+var swarmAddr = require('../swarm-addr')
 
 if (process.argv.length === 2) {
   printUsage()
@@ -45,7 +45,7 @@ switch (process.argv[2]) {
         var pub = JSON.parse(fs.readFileSync(path.join(root, 'keys.json'), 'utf-8')).pub
         var name = JSON.parse(fs.readFileSync('package.json')).name
         // TODO: hack! not network agnostic!
-        console.log('+ ' + name + peerAddr.SEP + 'hyperdrive' + peerAddr.SEP + pub)
+        console.log('+ ' + name + swarmAddr.SEP + 'hyperdrive' + swarmAddr.SEP + pub)
         console.log('Published ' + version)
       }
     })

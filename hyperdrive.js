@@ -6,7 +6,7 @@ var path = require('path')
 var mkdirp = require('mkdirp')
 var collect = require('collect-stream')
 var Swarm = require('discovery-swarm')
-var peerAddr = require('./peer-addr')
+var swarmAddr = require('./swarm-addr')
 
 var NETWORK = 'hyperdrive'
 
@@ -85,11 +85,11 @@ module.exports = function () {
   var swarm = host()
 
   this.isPeerPackage = function (pkg) {
-    return peerAddr.is(pkg)
+    return swarmAddr.is(pkg)
   }
 
   this.writeTarball = function (pkg, filename, buffer, done) {
-    filename = filename.replace(pkg, peerAddr.build(pkg, NETWORK, keys.pub))
+    filename = filename.replace(pkg, swarmAddr.build(pkg, NETWORK, keys.pub))
     var ws = archive.createFileWriteStream(filename)
     ws.on('end', done)
     ws.on('finish', done)
@@ -100,7 +100,7 @@ module.exports = function () {
   }
 
   this.writeMetadata = function (pkg, data, done) {
-    var outname = peerAddr.build(pkg, NETWORK, keys.pub)
+    var outname = swarmAddr.build(pkg, NETWORK, keys.pub)
 
     data._id = outname
     data.name = outname
@@ -121,7 +121,7 @@ module.exports = function () {
   }
 
   this.fetchMetadata = function (addr, done) {
-    var key = peerAddr.parse(addr).key
+    var key = swarmAddr.parse(addr).key
     getArchive(key, function (err, archive) {
       if (err) return done(err)
       var filename = addr + '.json'
@@ -134,7 +134,7 @@ module.exports = function () {
   }
 
   this.fetchTarball = function (filename, done) {
-    var idx = filename.lastIndexOf(peerAddr.SEP)
+    var idx = filename.lastIndexOf(swarmAddr.SEP)
     var pkg = filename.substring(idx+1, idx+64+1)
 
     getArchive(pkg, function (err, archive) {
