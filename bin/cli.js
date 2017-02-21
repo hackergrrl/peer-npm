@@ -12,7 +12,7 @@ if (process.argv.length === 2) {
 switch (process.argv[2]) {
   case 'install':
   case 'i':
-  case 'publish':
+  case 'publish':  // TODO: output the package name /w public key
   case 'adduser':
     var args = ['--registry', 'http://localhost:9000']
     args = args.concat(process.argv.slice(2))
