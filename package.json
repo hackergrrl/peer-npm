@@ -1,6 +1,6 @@
 {
   "name": "peer-npm",
-  "description": "an npm-compatible registry backed by peer-to-peer networks",
+  "description": "A peer-to-peer substitute for npm.",
   "author": "Stephen Whitmore <sww@eight.net>",
   "version": "0.1.0",
   "bin": {
