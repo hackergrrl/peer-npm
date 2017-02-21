@@ -14,7 +14,6 @@ module.exports = function () {
   var root = config('peer-npm')
   mkdirp.sync(root)
   var drive = hyperdrive(level(path.join(root, 'packages.db')))
-  var otherDrive = hyperdrive(level(path.join(root, 'downloaded.db')))
 
   var keys
   var archive
@@ -63,7 +62,7 @@ module.exports = function () {
   // TODO: clean up archive when done
   function getArchive (key, done) {
     console.log('getting archive', key)
-    var archive = otherDrive.createArchive(key)
+    var archive = drive.createArchive(key)
     done(null, archive)
 
     var swarm = Swarm()
