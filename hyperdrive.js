@@ -80,7 +80,7 @@ module.exports = function () {
       var r = archive.replicate()
       connection.pipe(r).pipe(connection)
       r.on('end', function () {
-        console.log('replicated with peer to share', link)
+        console.log('replicated with peer to share', key)
       })
       r.on('error', function (err) {
         console.log('ERROR REPLICATION:', err)
