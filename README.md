@@ -61,6 +61,8 @@ Navigate to a node package's directory (the one with `package.json`) and run
 
 ```
 $ peer-npm publish
++ foobar_ac06be2400c40f2c90f5f5282d57877b2de1674f5a736d3d9ae7c29e491d1a5c
+Published 0.0.4
 ```
 
 Once published, it will output the name of your package, concatenated with your
