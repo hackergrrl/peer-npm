@@ -135,7 +135,11 @@ module.exports = function () {
   }
 
   this.fetchTarball = function (filename, done) {
-    console.log(filename)
+    var idx = filename.lastIndexOf('_')
+    if (idx === -1) return done(new Error('not a peer-npm package'))
+
+    var pkg = filename.substring(idx+1, idx+64+1)
+
     getArchive(pkg, function (err, archive) {
       if (err) return done(err)
       var rs = archive.createFileReadStream(filename)
