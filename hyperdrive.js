@@ -4,7 +4,6 @@ var config = require('application-config-path')
 var fs = require('fs')
 var path = require('path')
 var mkdirp = require('mkdirp')
-var hypercore = require('hypercore')
 var collect = require('collect-stream')
 var Swarm = require('discovery-swarm')
 
