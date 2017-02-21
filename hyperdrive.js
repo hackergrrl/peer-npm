@@ -108,6 +108,7 @@ module.exports = function () {
   this.writeMetadata = function (pkg, data, done) {
     var outname = swarmAddr.build(pkg, NETWORK, keys.pub)
 
+    // rewrite FOO to FOO_hyperdrive_publickey
     data._id = outname
     data.name = outname
     Object.keys(data.versions).forEach(function (version) {
@@ -116,6 +117,10 @@ module.exports = function () {
       var r = new RegExp(pkg, 'g')
       v.dist.tarball = v.dist.tarball.replace(r, outname)
     })
+
+    // TODO: move swarmDependencies into dependencies
+    moveSwarmDepsIntoRegularDeps(data)
+    console.log(JSON.stringify(data, null, 2))
 
     var ws = archive.createFileWriteStream(outname + '.json')
     ws.on('finish', done)
@@ -156,5 +161,15 @@ module.exports = function () {
   }
 
   return this
+}
+
+function moveSwarmDepsIntoRegularDeps (data) {
+  Object.keys(data.versions).forEach(function (version) {
+    var v = data.versions[version]
+
+    for (var key in v['swarmDependencies']) {
+      v['dependencies'][key] = v['swarmDependencies'][key]
+    }
+  })
 }
 
