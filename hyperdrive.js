@@ -7,6 +7,7 @@ var mkdirp = require('mkdirp')
 var collect = require('collect-stream')
 var Swarm = require('discovery-swarm')
 var swarmAddr = require('./swarm-addr')
+var uniq = require('uniq')
 
 var NETWORK = 'hyperdrive'
 
@@ -40,8 +41,16 @@ module.exports = function () {
 
   archive.list(function (err, entries) {
     console.log('--- current entries ---')
+    entries = entries.filter(function (e) {
+      return e.name.endsWith('.json')
+    })
+    entries = entries.map(function (e) {
+      return e.name.substring(0, e.name.length - 5)
+    })
+    entries.sort()
+    uniq(entries)
     entries.forEach(function (e) {
-      console.log(e.name)
+      console.log(e)
     })
     console.log('---')
   })
