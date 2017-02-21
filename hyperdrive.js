@@ -6,6 +6,9 @@ var path = require('path')
 var mkdirp = require('mkdirp')
 var collect = require('collect-stream')
 var Swarm = require('discovery-swarm')
+var peerAddr = require('./peer-addr')
+
+var NETWORK = 'hyperdrive'
 
 module.exports = function () {
   var root = config('peer-npm')
@@ -81,17 +84,12 @@ module.exports = function () {
 
   var swarm = host()
 
-  // TODO: this could be more robust (check that it's a hexstring, etc)
   this.isPeerPackage = function (pkg) {
-    var ending = pkg.lastIndexOf('_')
-    if (ending === -1) return false
-
-    var key = pkg.substring(ending + 1)
-    return key.length === 64
+    return peerAddr.is(pkg)
   }
 
   this.writeTarball = function (pkg, filename, buffer, done) {
-    filename = filename.replace(pkg, pkg + '_' + keys.pub)
+    filename = filename.replace(pkg, peerAddr.build(pkg, NETWORK, keys.pub))
     var ws = archive.createFileWriteStream(filename)
     ws.on('end', done)
     ws.on('finish', done)
@@ -102,7 +100,7 @@ module.exports = function () {
   }
 
   this.writeMetadata = function (pkg, data, done) {
-    var outname = pkg + '_' + keys.pub
+    var outname = peerAddr.build(pkg, NETWORK, keys.pub)
 
     data._id = outname
     data.name = outname
@@ -122,11 +120,11 @@ module.exports = function () {
     console.log('writing', outname + '.json')
   }
 
-  this.fetchMetadata = function (pkg, done) {
-    var key = pkg.substring(pkg.length - 64)
+  this.fetchMetadata = function (addr, done) {
+    var key = peerAddr.parse(addr).key
     getArchive(key, function (err, archive) {
       if (err) return done(err)
-      var filename = pkg + '.json'
+      var filename = addr + '.json'
       collect(archive.createFileReadStream(filename), function (err, data) {
         if (err) return done(err)
         var json = JSON.parse(data.toString())
@@ -136,9 +134,7 @@ module.exports = function () {
   }
 
   this.fetchTarball = function (filename, done) {
-    var idx = filename.lastIndexOf('_')
-    if (idx === -1) return done(new Error('not a peer-npm package'))
-
+    var idx = filename.lastIndexOf(peerAddr.SEP)
     var pkg = filename.substring(idx+1, idx+64+1)
 
     getArchive(pkg, function (err, archive) {
