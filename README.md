@@ -10,16 +10,11 @@ TODO: write-up
 
 ## WHY would someone want something like this?
 
-- I want to publish my package to npm AND "the swarm" so that my package is more
-  reliably available
 - I want an easy way to use/publish/install packages when I'm offline
 - I want to be able to install/share packages /w my friends over LAN
-- I want my packages to be available & resistant to censorship
+- I want my packages to be available & resistant to censorship & network failure
+- I want a fail-safe in case npm Inc ever goes away or is seized by the government
 - I want a package manager whose backend is 100% permissively open source
-- I think the future of the node community doesn't belong in the hands of a
-  for-profit company
-- I want a fail-safe in case npm Inc ever goes belly-up or is seized by the
-  government
 
 
 
