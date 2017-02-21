@@ -2,7 +2,7 @@
   "name": "peer-npm",
   "description": "an npm-compatible registry backed by peer-to-peer networks",
   "author": "Stephen Whitmore <sww@eight.net>",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "bin": {
     "peer-npm": "bin/cli.js"
   },
