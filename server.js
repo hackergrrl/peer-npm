@@ -36,14 +36,11 @@ module.exports = function (done) {
   function onPackage (req, res, match) {
     if (req.method === 'GET') {
       var pkg = match.params.pkg
-      driver.fetchHashes(pkg, function (err, hashes) {
+      driver.fetchMetadata(pkg, function (err, data) {
         if (err) {
           res.statusCode = 404
         } else {
-          console.log(err, hashes)
-          var packages = mapHashesToMetadata(pkg, hashes)
-          res.write(JSON.stringify(packages))
-          process.stdout.write(JSON.stringify(packages, null, 2) + '\n')
+          res.write(JSON.stringify(data))
           res.statusCode = 201
         }
         res.end()
@@ -89,7 +86,11 @@ module.exports = function (done) {
 
     function writeMeta (data, hash, done) {
       var version = data['dist-tags'].latest
-      driver.writeHash(pkg, version, hash, function (err) {
+
+      // rewrite tarball to be "hash.tgz"
+      data.versions[version].dist.tarball = 'http://localhost:9000/' + hash + '.tgz'
+
+      driver.writeMetadata(pkg, version, data.versions[version], function (err) {
         if (err) return done(err)
         console.log('wrote meta')
         done()
@@ -112,11 +113,6 @@ module.exports = function (done) {
     })
 
     done(null, res)
-  }
-
-  function fetchPackage (pkg, out, done) {
-    console.log('fetch pkg', pkg)
-    driver.fetchMetadata(pkg, done)
   }
 
   function onAddUser (req, res, match) {

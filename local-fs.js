@@ -11,24 +11,29 @@ module.exports = function (root) {
   var registryFilename = path.join(root, 'registry.json')
   var registry = readRegistry(registryFilename)
 
-  // Ask for package, get its known shasums
-  this.fetchHashes = function (pkg, done) {
-    console.log(registry)
+  // Ask for package, get its metadata
+  this.fetchMetadata = function (pkg, done) {
     if (registry.packages[pkg]) {
-      done(null, registry.packages[pkg].shasums)
+      done(null, registry.packages[pkg])
     } else {
       done({notFound:true})
     }
   }
 
-  // Recv package name, version, and shasum
-  this.writeHash = function (pkg, version, shasum, done) {
+  // Recv package name, version, and metadata
+  this.writeMetadata = function (pkg, version, data, done) {
     if (!registry.packages[pkg]) {
       registry.packages[pkg] = {
-        shasums: {}
+        _id: pkg,
+        name: pkg,
+        'dist-tags': {
+          latest: version
+        },
+        versions: {}
       }
     }
-    registry.packages[pkg].shasums[version] = shasum
+    registry.packages[pkg].versions[version] = data
+    registry.packages[pkg]['dist-tags'].latest = version
 
     writeRegistry(registryFilename, registry)
 
