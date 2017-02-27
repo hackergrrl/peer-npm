@@ -17,7 +17,7 @@ switch (process.argv[2]) {
   case 'install':
   case 'i':
   case 'remove':
-    var args = ['--registry', 'http://localhost:9000']
+    var args = ['--registry', 'http://localhost:9000', '--cache-min=0']
     args = args.concat(process.argv.slice(2))
     spawn('npm', args, {stdio:'inherit'})
     break
