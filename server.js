@@ -13,8 +13,8 @@ module.exports = function (done) {
   router.addRoute('/-/user/org.couchdb.user\::user', onAddUser)
 
   // var driver = require('./hyperdrive')()
-  var driver = require('./local-fs')('.')
-  var store = require('fs-blob-store')('./packages')
+  var driver = require('./local-fs')('/tmp/registry')
+  var store = require('fs-blob-store')('/tmp/registry')
 
   var server = http.createServer(function (req, res) {
     console.log(req.method.toUpperCase() + ' ' + req.url)

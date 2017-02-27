@@ -4,6 +4,16 @@
 
 **NOTE**: Very unstable and mad science-y. Use at your own discretion.
 
+## Project Goals
+
+1. The official npm package registry should remain a valid, legitimate registry, but no longer be *required* for node package management.
+2. Users of peer-npm form a swarm: a peer-to-peer network where node packages are shared communally without a centralized source.
+3. Anyone can use their machine's local npm package cache to serve packages to the rest of the swarm.
+4. Users can install node packages over P2P networks, over local networks, and offline from their local machine.
+5. peer-npm is readily hackable, so that adding new ways to share packages is easy. (Bluetooth? Sound waves? USB key sneakernets?)
+6. Using peer-npm with your packages won't break your work: vanilla `npm` will keep on working.
+
+
 ## WHY would someone want something like this?
 
 - I want an easy way to use/publish/install packages when I'm offline
@@ -100,6 +110,21 @@ users.
 
 
 ## How does it work?
+
+### Key Concepts
+
+- A **registry** is any source that can do two things:
+  1. Answer the question "give me the metadata for the package named X"
+  2. (optionally) Receive the `package.json` and tarball of a new package to be published.
+- A **blob store** is any source that can do two things:
+  1. Supply the tarball whose checksum matches the requested SHA-1 hash.
+  2. (optionally) Receive a tarball and make it available by its SHA-1 hash.
+
+[npmjs.org](https://npmjs.org) is a source that provides both of these things: you can find packages by name, publish packages, and also get/put tarballs for those packages.
+
+What about other sources? Not everyone has a high speed internet connection available to them at all times. There are many alternatives for getting package data from one computer to another today, like peer-to-peer networks or multicast DNS.
+
+### Overview
 
 `peer-npm` pretends to be an npm registry, but running on your local machine.
 When you run `peer-npm daemon` it runs this registry (and also does the peering
