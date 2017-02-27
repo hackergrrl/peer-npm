@@ -30,8 +30,7 @@ switch (process.argv[2]) {
 
     var args = ['--registry', 'http://localhost:9000']
     args = args.concat(process.argv.slice(2))
-    var p = spawn('npm', args, {stdio:'inherit'})
-    p.on('close', done)
+    spawn('npm', args, {stdio:'inherit'})
     break
   case 'daemon':
     createServer(function (err, server) {

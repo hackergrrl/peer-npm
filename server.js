@@ -4,6 +4,7 @@ var routes = require('routes')
 var url = require('url')
 var body = require('body')
 var request = require('request')
+var sha = require('sha1')
 
 module.exports = function (done) {
   var router = routes()
@@ -76,27 +77,41 @@ module.exports = function (done) {
     var attachments = data._attachments
     delete data._attachments
 
-    var pending = 2
     var pkg = data.name
-    driver.writeMetadata(pkg, data, function (err) {
-      console.log('wrote meta')
-      if (--pending === 0) done(err)
-    })
-    writeAttachments(pkg, attachments, function (err) {
+    writeAttachments(pkg, attachments, function (err, hashes) {
+      if (err) return done(err)
       console.log('wrote tarball')
-      if (--pending === 0) done(err)
+      if (hashes.length !== 1) {
+        throw new Error('multiple attachments -- unexpected! please file an issue about seeing this.')
+      }
+      writeMeta(data, hashes[0], done)
     })
+
+    function writeMeta (data, hash, done) {
+      var version = data['dist-tags'].latest
+      driver.writeHash(pkg, version, hash, function (err) {
+        if (err) return done(err)
+        console.log('wrote meta')
+        done()
+      })
+    }
   }
 
   function writeAttachments (pkg, attachments, done) {
     var pending = Object.keys(attachments).length
+    var res = []
 
     Object.keys(attachments).forEach(function (filename) {
       var data = new Buffer(attachments[filename].data, 'base64')
-      driver.writeTarball(pkg, filename, data, function (err) {
-        if (--pending === 0) done()
-      })
+      var hash = sha(data)
+      console.log('hash', hash)
+      var ws = store.createWriteStream(hash + '.tgz')
+      ws.write(data)
+      ws.end()
+      res.push(hash)
     })
+
+    done(null, res)
   }
 
   function fetchPackage (pkg, out, done) {
@@ -133,6 +148,7 @@ module.exports = function (done) {
     })
     rs.pipe(res)
   }
+
 
   return server
 }
